@@ -68,7 +68,7 @@
       align-items: center;
       font-family: monospace;
       color: var(--accent-glow);
-      /* Changed to accent-glow */
+      /* Changed to Accent Glow */
       transition: opacity 1s ease, visibility 1s;
     }
 
@@ -78,6 +78,8 @@
       text-align: left;
       font-size: clamp(0.9rem, 3vw, 1.2rem);
       line-height: 1.5;
+      text-shadow: 0 0 10px rgba(129, 140, 248, 0.5);
+      /* Added subtle text glow */
     }
 
     .cursor-blink {
@@ -201,7 +203,7 @@
       margin-bottom: 2rem;
     }
 
-    /* --- 3D Glass Cards --- */
+    /* --- 3D Glass Cards (Animated Glow) --- */
     .card-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -217,6 +219,88 @@
       border: 1px solid var(--glass-border);
       padding: 2.5rem;
       border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      /* Required to contain the shimmer sweep */
+
+      /* Continuous breathing glow */
+      animation: breatheGlow 6s ease-in-out infinite;
+    }
+
+    /* Elevate content above the sweeping background effect */
+    .glass-card>* {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Stagger the glowing animations for an organic feel */
+    .glass-card:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .glass-card:nth-child(2) {
+      animation-delay: -2s;
+    }
+
+    .glass-card:nth-child(3) {
+      animation-delay: -4s;
+    }
+
+    @keyframes breatheGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 15px rgba(79, 70, 229, 0.05), inset 0 0 5px rgba(79, 70, 229, 0.02);
+        border-color: rgba(255, 255, 255, 0.08);
+      }
+
+      50% {
+        box-shadow: 0 0 35px rgba(129, 140, 248, 0.25), inset 0 0 15px rgba(129, 140, 248, 0.1);
+        border-color: rgba(129, 140, 248, 0.4);
+      }
+    }
+
+    /* Glass Shimmer Sweep */
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+      transform: skewX(-25deg);
+      animation: sweepLight 8s ease-in-out infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Stagger sweep timings */
+    .glass-card:nth-child(1)::before {
+      animation-delay: 0s;
+    }
+
+    .glass-card:nth-child(2)::before {
+      animation-delay: 2s;
+    }
+
+    .glass-card:nth-child(3)::before {
+      animation-delay: 4s;
+    }
+
+    @keyframes sweepLight {
+
+      0%,
+      60% {
+        left: -150%;
+      }
+
+      /* Stays hidden for 60% of the animation cycle */
+      100% {
+        left: 200%;
+      }
+
+      /* Sweeps across quickly */
     }
 
     .glass-card h3 {
