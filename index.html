@@ -68,8 +68,7 @@
       align-items: center;
       font-family: monospace;
       color: var(--accent-glow);
-      /* Changed to Accent Glow */
-      transition: opacity 1s ease, visibility 1s;
+      transition: opacity 0.8s ease, visibility 0.8s;
     }
 
     .terminal {
@@ -79,7 +78,6 @@
       font-size: clamp(0.9rem, 3vw, 1.2rem);
       line-height: 1.5;
       text-shadow: 0 0 10px rgba(129, 140, 248, 0.5);
-      /* Added subtle text glow */
     }
 
     .cursor-blink {
@@ -123,7 +121,6 @@
       border-color: transparent;
     }
 
-    /* Hide custom cursors on touch devices */
     @media (pointer: coarse) {
 
       #cursor-dot,
@@ -221,19 +218,14 @@
       border-radius: 20px;
       position: relative;
       overflow: hidden;
-      /* Required to contain the shimmer sweep */
-
-      /* Continuous breathing glow */
       animation: breatheGlow 6s ease-in-out infinite;
     }
 
-    /* Elevate content above the sweeping background effect */
     .glass-card>* {
       position: relative;
       z-index: 2;
     }
 
-    /* Stagger the glowing animations for an organic feel */
     .glass-card:nth-child(1) {
       animation-delay: 0s;
     }
@@ -275,7 +267,6 @@
       pointer-events: none;
     }
 
-    /* Stagger sweep timings */
     .glass-card:nth-child(1)::before {
       animation-delay: 0s;
     }
@@ -295,12 +286,9 @@
         left: -150%;
       }
 
-      /* Stays hidden for 60% of the animation cycle */
       100% {
         left: 200%;
       }
-
-      /* Sweeps across quickly */
     }
 
     .glass-card h3 {
@@ -561,9 +549,10 @@
 
   <script>
     /* =========================================
-       1. BOOT SEQUENCE TERMINAL
+       1. BOOT SEQUENCE TERMINAL (WITH SESSION STORAGE)
     ========================================= */
     const terminalText = document.getElementById('terminal-text');
+    const bootScreen = document.getElementById('boot-screen');
     const lines = [
       "> INITIALIZING SYSTEM...",
       "> LOADING MODULE: JAVASCRIPT_ENGINE",
@@ -595,15 +584,26 @@
         }
       } else {
         setTimeout(() => {
-          const bootScreen = document.getElementById('boot-screen');
           bootScreen.style.opacity = '0';
-          setTimeout(() => bootScreen.style.visibility = 'hidden', 800);
+          setTimeout(() => {
+            bootScreen.style.visibility = 'hidden';
+            bootScreen.style.display = 'none'; // Remove completely to avoid layout issues
+            document.body.style.overflow = ''; // Release scroll lock
+            sessionStorage.setItem('hasSeenBoot', 'true'); // Save to session
+          }, 800);
         }, 500);
       }
     }
 
     window.onload = () => {
-      setTimeout(typeLine, 300);
+      // Check if user has already seen the boot screen this session
+      if (sessionStorage.getItem('hasSeenBoot')) {
+        bootScreen.style.display = 'none';
+        document.body.style.overflow = ''; // Ensure scroll is enabled
+      } else {
+        document.body.style.overflow = 'hidden'; // Lock scrolling
+        setTimeout(typeLine, 300);
+      }
     };
 
     /* =========================================
